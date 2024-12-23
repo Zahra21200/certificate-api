@@ -24,10 +24,15 @@ class CertificateRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'national_id' => 'required|string|unique:certificates,national_id|max:20',
+            'gender' => 'required|in:male,female', 
+            'phone_number' => 'required|string|max:20', 
+            'city' => 'required|string|max:255', 
+            'accept_policy' => 'required|boolean', 
+            'transferred_by' => 'required|in:trainee,other',
+            'other' => 'nullable|string|max:255',
             'from_date' => 'required|date',
             'to_date' => 'required|date|after_or_equal:from_date',
             'hours' => 'required|integer|min:1',
         ];
     }
-
 }

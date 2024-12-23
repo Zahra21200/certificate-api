@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class CertificateResource extends JsonResource
 {
-    // دالة لتحويل الأرقام الهندية
+    // Function to convert English numbers to Hindi numbers
     public static function convertToHindiNumbers($number)
     {
         $hindiNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
@@ -15,12 +15,9 @@ class CertificateResource extends JsonResource
         return str_replace($englishNumbers, $hindiNumbers, $number);
     }
 
-    /**
-     * تحويل التاريخ إلى الأرقام الهندية.
-     */
+    // Function to convert date to Hindi numbers
     public static function convertDateToHindiNumbers($date)
     {
-        // تحويل التاريخ إلى أرقام هندية
         return self::convertToHindiNumbers($date);
     }
 
@@ -35,6 +32,12 @@ class CertificateResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'national_id' => self::convertToHindiNumbers($this->national_id),
+            'gender' => $this->gender,
+            'phone_number' =>self::convertToHindiNumbers($this->phone_number) ,
+            'city' => $this->city,
+            'accept_policy' => $this->accept_policy,
+            'transferred_by' => $this->transferred_by,
+            'other' => $this->other,
             'from_date' => self::convertDateToHindiNumbers($this->from_date),
             'to_date' => self::convertDateToHindiNumbers($this->to_date),
             'hours' => $this->hours,

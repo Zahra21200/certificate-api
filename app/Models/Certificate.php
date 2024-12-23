@@ -12,5 +12,11 @@ class Certificate extends Model
         'from_date',
         'to_date',
         'hours',
+        'gender', 
+        'phone_number', 
+        'city',
+        'accept_policy',
+        'transferred_by', 
+        'other', 
     ];
 }
