@@ -1,8 +1,4 @@
-### README Explanation for Each Command
 
-When providing setup instructions in a `README.md` file for a Laravel project, it’s important to explain why each command is necessary. Below is a breakdown of each command with explanations that you can add to the `README` file.
-
----
 
 ### 1. **`composer install`**
 
