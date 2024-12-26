@@ -28,6 +28,8 @@ class CertificateResource extends JsonResource
      */
     public function toArray($request)
     {
+        $fromDate = new \DateTime($this->from_date);
+        $toDate = new \DateTime($this->to_date); 
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -38,10 +40,10 @@ class CertificateResource extends JsonResource
             'accept_policy' => $this->accept_policy,
             'transferred_by' => $this->transferred_by,
             'other' => $this->other,
-            'from_date' => self::convertDateToHindiNumbers($this->from_date),
-            'to_date' => self::convertDateToHindiNumbers($this->to_date),
-            'hours' => $this->hours,
-            'created_at' => self::convertDateToHindiNumbers($this->created_at->format('Y-m-d H:i:s')),
+            'from_date' => self::convertDateToHindiNumbers($fromDate->format('d-m-Y')),
+            'to_date' => self::convertDateToHindiNumbers($toDate->format('d-m-Y')),    
+            'hours' =>  self::convertDateToHindiNumbers($this->hours),
+            'created_at' => self::convertDateToHindiNumbers($this->created_at->format('d-m-Y H:i:s')),
         ];
     }
 }

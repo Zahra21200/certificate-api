@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Certificate;
+use Illuminate\Database\Eloquent\Collection;
 
 class CertificateRepository implements CertificateRepositoryInterface
 {
@@ -15,4 +16,10 @@ class CertificateRepository implements CertificateRepositoryInterface
     {
         return Certificate::where('national_id', $nationalId)->first();
     }
+
+    public function all(): Collection
+    {
+        return Certificate::all();
+    }
+
 }
