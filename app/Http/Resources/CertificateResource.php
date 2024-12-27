@@ -20,7 +20,10 @@ class CertificateResource extends JsonResource
     {
         return self::convertToHindiNumbers($date);
     }
-
+    public static function translateGender($gender)
+    {
+        return $gender === 'male' ? 'ذكر' : ($gender === 'female' ? 'أنثى' : null);
+    }
     /**
      * Transform the resource into an array.
      *
@@ -34,7 +37,7 @@ class CertificateResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'national_id' => self::convertToHindiNumbers($this->national_id),
-            'gender' => $this->gender,
+            'gender' => self::translateGender($this->gender),
             'phone_number' =>self::convertToHindiNumbers($this->phone_number) ,
             'city' => $this->city,
             'accept_policy' => $this->accept_policy,
