@@ -16,6 +16,10 @@ class CertificateRepository implements CertificateRepositoryInterface
     {
         return Certificate::where('national_id', $nationalId)->first();
     }
+    public function getById(string $Id)
+    {
+        return Certificate::where('id', $Id)->first();
+    }
 
     public function all(): Collection
     {

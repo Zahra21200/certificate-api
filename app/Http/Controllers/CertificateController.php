@@ -30,6 +30,14 @@ class CertificateController extends Controller
             return response()->json(['error' => 'Certificate not found'], 404);
         }
         return new CertificateResource($certificate);
+    } 
+    public function getbyid($id)
+    {
+        $certificate = $this->certificateRepository->getById($id);
+        if (!$certificate) {
+            return response()->json(['error' => 'Certificate not found'], 404);
+        }
+        return new CertificateResource($certificate);
     }
 
 

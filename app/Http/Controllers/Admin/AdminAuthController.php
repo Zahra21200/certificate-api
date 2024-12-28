@@ -22,11 +22,11 @@ class AdminAuthController extends Controller
 
 
     // Admin Registration
-    public function login(Request $request)
+    public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'username' => 'required',
-            'password' => 'required',
+            'password' => 'required|min:6|max:255',
+            'username' => 'required|unique:admins|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -38,47 +38,80 @@ class AdminAuthController extends Controller
             ], 402);
         }
 
-        $admin = Admin::where('username', $request->username)->first();
-
-        if (!$admin) {
-            return response()->json([
-                'status' => false,
-                'message' => __('The username does not exist'),
-            ], 404);
-        }
-
-        if (!Hash::check($request->password, $admin->password)) {
-            return response()->json([
-                'status' => false,
-                'code' => 401,
-                'message' => __('The username or password is incorrect'),
-                'data' => null,
-            ], 401);
-        }
-
-        try {
-            $token = auth('admin')->login($admin); // Use 'api' guard
-        } catch (JWTException $e) {
-            return response()->json([
-                'status' => false,
-                'code' => 500,
-                'message' => __('Could not create token.'),
-            ], 500);
-        }
-
-        $data = $admin->toArray();
-        $data['token'] = $token;
-        $data['token_type'] = 'Bearer'; // Include token type
+        Admin::create([
+            "username" => $request->username,
+            "password" => Hash::make($request->password),
+        ]);
 
         return response()->json([
             'status' => true,
             'code' => 200,
-            'message' => __('Admin login successful'),
-            'data' => $data,
+            'message' => "Admin account created successfully",
         ], 200);
     }
+    public function login(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'username' => 'required',
+            'password' => 'required',
+                ]);
 
-   
+        if ($validator->fails())
+        {
+            return response()->json([
+                "status" => false,
+                 'code' => 402,
+                 'message' => $validator->errors()->first(),
+                 'data' => null,
+                    ], 402);
+        }
+
+        $admin = Admin::where('username', $request->username)
+                      ->first();
+
+        if ($admin) {
+            $credentials = [
+                'password' => $request->password,
+            ];
+
+            if ($admin->username == $request->username) {
+                $credentials['username'] = $request->login;
+            }
+
+            try {
+                if (!$token = auth('admin')->attempt($credentials)) {
+                    return response()->json([
+                        'status' => false,
+                        'code' => 401,
+                        'message' => __('The username or password is incorrect'),
+                        'data' => null,
+                    ], 401);
+                }
+                $data = $admin->toArray();
+                $data['token'] = $token;
+                $data['type'] = 'admin';
+                return response()->json([
+                    'status' => true,
+                    'code' => 200,
+                    'message' => __('Admin login successful'),
+                    'data' => $data,
+                ], 200);
+
+            } catch (JWTException $e) {
+                return response()->json([
+                    'status' => false,
+                    'code' => 500,
+                    'message' => __('Server error, please try again later'),
+                    'data' => null,
+                ], 500);
+            }
+        }
+
+        return response()->json([
+            'status' => false,
+            'message' => __('The username does not exist'),
+        ], 404);
+    }
 
 
 
