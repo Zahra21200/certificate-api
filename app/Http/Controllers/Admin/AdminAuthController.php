@@ -49,69 +49,56 @@ class AdminAuthController extends Controller
             'message' => "Admin account created successfully",
         ], 200);
     }
+    
     public function login(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'username' => 'required',
-            'password' => 'required',
-                ]);
+{
+    // Validate the incoming request
+    $validator = Validator::make($request->all(), [
+        'username' => 'required|string',
+        'password' => 'required|string',
+    ]);
 
-        if ($validator->fails())
-        {
-            return response()->json([
-                "status" => false,
-                 'code' => 402,
-                 'message' => $validator->errors()->first(),
-                 'data' => null,
-                    ], 402);
-        }
-
-        $admin = Admin::where('username', $request->username)
-                      ->first();
-
-        if ($admin) {
-            $credentials = [
-                'password' => $request->password,
-            ];
-
-            if ($admin->username == $request->username) {
-                $credentials['username'] = $request->login;
-            }
-
-            try {
-                if (!$token = auth('admin')->attempt($credentials)) {
-                    return response()->json([
-                        'status' => false,
-                        'code' => 401,
-                        'message' => __('The username or password is incorrect'),
-                        'data' => null,
-                    ], 401);
-                }
-                $data = $admin->toArray();
-                $data['token'] = $token;
-                $data['type'] = 'admin';
-                return response()->json([
-                    'status' => true,
-                    'code' => 200,
-                    'message' => __('Admin login successful'),
-                    'data' => $data,
-                ], 200);
-
-            } catch (JWTException $e) {
-                return response()->json([
-                    'status' => false,
-                    'code' => 500,
-                    'message' => __('Server error, please try again later'),
-                    'data' => null,
-                ], 500);
-            }
-        }
-
+    if ($validator->fails()) {
         return response()->json([
             'status' => false,
-            'message' => __('The username does not exist'),
-        ], 404);
+            'code' => 422,
+            'message' => $validator->errors()->first(),
+            'data' => null,
+        ], 422);
     }
+
+    // Prepare credentials
+    $credentials = [
+        'username' => $request->username,
+        'password' => $request->password,
+    ];
+
+    // Attempt login using the admin guard
+    if (!$token = auth('admin')->attempt($credentials)) {
+        return response()->json([
+            'status' => false,
+            'code' => 401,
+            'message' => __('The username or password is incorrect'),
+            'data' => null,
+        ], 401);
+    }
+
+    // Retrieve authenticated admin
+    $admin = auth('admin')->user();
+
+    // Prepare the response data
+    $data = $admin->toArray();
+    $data['token'] = $token;
+    $data['token_type'] = 'Bearer';
+
+    return response()->json([
+        'status' => true,
+        'code' => 200,
+        'message' => __('Admin login successful'),
+        'data' => $data,
+    ], 200);
+}
+
 
 
 
