@@ -32,13 +32,38 @@ class CertificateController extends Controller
         return new CertificateResource($certificate);
     } 
     public function getbyid($id)
-    {
-        $certificate = $this->certificateRepository->getById($id);
-        if (!$certificate) {
-            return response()->json(['error' => 'Certificate not found'], 404);
-        }
-        return new CertificateResource($certificate);
+{
+    // الحصول على الشهادة بناءً على الـ ID
+    $certificate = $this->certificateRepository->getById($id);
+
+    if (!$certificate) {
+        return response()->json([
+            'status' => false,
+            'message' => 'Certificate not found',
+        ], 404);
     }
+
+    // بناء الاستجابة المخصصة
+    return response()->json([
+        'status' => true,
+        'data' => [
+            'id' => $certificate->id,
+            'name' => $certificate->name,
+            'national_id' => $certificate->national_id,
+            'gender' => $certificate->gender,
+            'phone_number' => $certificate->phone_number,
+            'city' => $certificate->city,
+            'accept_policy' => $certificate->accept_policy,
+            'transferred_by' => $certificate->transferred_by,
+            'other' => $certificate->other,
+            'from_date' => $certificate->from_date,
+            'to_date' => $certificate->to_date,
+            'hours' => $certificate->hours,
+            'created_at' => $certificate->created_at->format('Y-m-d H:i:s'),
+        ],
+    ], 200);
+}
+
 
 
     public function destroy($id)
